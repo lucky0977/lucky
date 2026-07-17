@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
-using Lucky.Data;
-using Lucky.Models;
-using Microsoft.EntityFrameworkCore;
+using Lucky.DTOs;
+using Lucky.Services;
 
 namespace Lucky.Controllers
 {
@@ -11,18 +10,18 @@ namespace Lucky.Controllers
     [Authorize]
     public class EmployeeController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly IEmployeeService _service;
 
-        public EmployeeController(AppDbContext context)
+        public EmployeeController(IEmployeeService service)
         {
-            _context = context;
+            _service = service;
         }
 
         // GET: api/Employee
         [HttpGet]
         public async Task<IActionResult> GetAll()
         {
-            var employees = await _context.Employees.ToListAsync();
+            var employees = await _service.GetAllAsync();
             return Ok(employees);
         }
 
@@ -30,7 +29,7 @@ namespace Lucky.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await _service.GetByIdAsync(id);
             if (employee == null)
                 return NotFound();
 
@@ -39,40 +38,30 @@ namespace Lucky.Controllers
 
         // POST: api/Employee
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] Employee employee)
+        public async Task<IActionResult> Create([FromBody] EmployeeCreateDto dto)
         {
-            _context.Employees.Add(employee);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetById), new { id = employee.Id }, employee);
+            var created = await _service.CreateAsync(dto);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
 
         // PUT: api/Employee/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] Employee updatedEmployee)
+        public async Task<IActionResult> Update(int id, [FromBody] EmployeeUpdateDto dto)
         {
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee == null)
+            var updated = await _service.UpdateAsync(id, dto);
+            if (updated == null)
                 return NotFound();
 
-            employee.Name = updatedEmployee.Name;
-            employee.Salary = updatedEmployee.Salary;
-            employee.Email = updatedEmployee.Email;
-
-            await _context.SaveChangesAsync();
-            return Ok(employee);
+            return Ok(updated);
         }
 
         // DELETE: api/Employee/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var employee = await _context.Employees.FindAsync(id);
-            if (employee == null)
+            var deleted = await _service.DeleteAsync(id);
+            if (!deleted)
                 return NotFound();
-
-            _context.Employees.Remove(employee);
-            await _context.SaveChangesAsync();
 
             return NoContent();
         }

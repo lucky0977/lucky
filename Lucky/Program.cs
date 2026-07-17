@@ -11,6 +11,12 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddControllers();
+
+// ===== Dependency Injection: Repository + Service layers =====
+builder.Services.AddScoped<Lucky.Repositories.IEmployeeRepository, Lucky.Repositories.EmployeeRepository>();
+builder.Services.AddScoped<Lucky.Services.IEmployeeService, Lucky.Services.EmployeeService>();
+// ===== End DI Setup =====
+
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddSwaggerGen(options =>
