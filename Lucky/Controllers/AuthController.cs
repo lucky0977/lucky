@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 
 namespace Lucky.Controllers
 {
@@ -114,20 +115,36 @@ namespace Lucky.Controllers
 
     public class ForgotPasswordRequest
     {
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
     }
 
     public class RegisterRequest
     {
+        [Required]
+        [StringLength(100, MinimumLength = 2, ErrorMessage = "Name must be between 2 and 100 characters.")]
         public string Name { get; set; }
+
+        [Required]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
         public string Email { get; set; }
+
+        [Range(1, 10000000, ErrorMessage = "Salary must be a positive number.")]
         public decimal Salary { get; set; }
+
+        [Required]
+        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters.")]
         public string Password { get; set; }
     }
 
     public class LoginRequest
     {
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
+
+        [Required]
         public string Password { get; set; }
     }
 }
