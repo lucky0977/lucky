@@ -75,6 +75,10 @@ builder.Services.AddAuthentication(options =>
 
 var app = builder.Build();
 
+// ===== Global Exception Handling — must be FIRST in the pipeline =====
+app.UseMiddleware<Lucky.Middleware.ExceptionHandlingMiddleware>();
+// ===== End Exception Handling =====
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
