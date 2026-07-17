@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
 using Lucky.Data;
 using Lucky.Models;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ namespace Lucky.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class EmployeeController : ControllerBase
     {
         private readonly AppDbContext _context;
