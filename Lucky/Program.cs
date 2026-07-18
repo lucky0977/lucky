@@ -79,11 +79,13 @@ var app = builder.Build();
 app.UseMiddleware<Lucky.Middleware.ExceptionHandlingMiddleware>();
 // ===== End Exception Handling =====
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+// ===== Swagger enabled in ALL environments (including Production/Azure) =====
+// Note: In a real production app with sensitive data, you'd typically restrict
+// this to Development only, or protect it behind authentication. For learning
+// purposes, we're keeping it open so we can test the live Azure deployment.
+app.UseSwagger();
+app.UseSwaggerUI();
+// ===== End Swagger Setup =====
 
 app.UseHttpsRedirection();
 
